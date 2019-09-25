@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import 'models/Item.dart';
+
 void main() => runApp(MyApp());
 
 class MyApp extends StatelessWidget {
@@ -17,7 +19,20 @@ class MyApp extends StatelessWidget {
   }
 }
 
-class MyHomePage extends StatelessWidget {
+class MyHomePage extends StatefulWidget {
+var items = new List<Item>();
+
+  MyHomePage(){
+    items = [];
+    items.add(Item(title:"Banana 1",done: false));
+    items.add(Item(title:"Abacate 2",done: true));
+    items.add(Item(title:"Limao 3",done: false));
+  }
+  @override
+  _MyHomePageState createState() => _MyHomePageState();
+}
+
+class _MyHomePageState extends State<MyHomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -28,10 +43,19 @@ class MyHomePage extends StatelessWidget {
           Icon(Icons.plus_one)
         ],
       ),
-      body: Container(
-        child: Center(
-          child: Text("Olá Mundo")
-          ),
+      body: ListView.builder(
+        itemCount: widget.items.length,
+        itemBuilder: (BuildContext context, int index){
+          final item = widget.items[index];
+          return CheckboxListTile(
+            title: Text(item.title),
+            key: Key(item.title),
+            value:item.done,
+            onChanged: (value){
+
+            },
+          );
+        },
       ),
     );
   }
