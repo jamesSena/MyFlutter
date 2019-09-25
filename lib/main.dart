@@ -24,7 +24,7 @@ var items = new List<Item>();
 
   MyHomePage(){
     items = [];
-    items.add(Item(title:"Banana 1",done: false));
+    items.add(Item(title:"Banana",done: false));
     items.add(Item(title:"Abacate 2",done: true));
     items.add(Item(title:"Limao 3",done: false));
   }
@@ -33,7 +33,27 @@ var items = new List<Item>();
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-var newTaskController = TextEditingController();
+  var newTaskController = TextEditingController();
+
+  void add(){
+    if(newTaskController.text.isEmpty) return;
+    setState(() {
+     widget.items.add(
+       Item(
+         title: newTaskController.text,
+         done: false
+       )
+     );
+     newTaskController.text = ""; 
+    });
+  }
+void remove(int index){
+    setState(() {
+     widget.items.removeAt(index); 
+    });
+  }
+
+
 
   @override
   Widget build(BuildContext context) {
@@ -63,15 +83,24 @@ var newTaskController = TextEditingController();
         itemCount: widget.items.length,
         itemBuilder: (BuildContext context, int index){
           final item = widget.items[index];
-          return CheckboxListTile(
-            title: Text(item.title),
-            key: Key(item.title),
-            value:item.done,
-            onChanged: (value){
-              print("Teste:  $value");
-              setState(() {//Attualizando o item
-                 item.done = value;
-              });
+          return Dismissible(
+            background: Container(
+              color: Colors.red,
+              child: Text("Excluir")
+            ),
+            key:  Key(item.title.toString()),
+            child: CheckboxListTile(
+              title: Text(item.title),
+              value:item.done,
+              onChanged: (value){
+                print("Teste:  $value");
+                setState(() {//Attualizando o item
+                  item.done = value;
+                });
+              },
+            ),
+            onDismissed: (direction){
+              remove(index);
             },
           );
         },
