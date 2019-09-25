@@ -52,7 +52,7 @@ class _MyHomePageState extends State<MyHomePage> {
             key: Key(item.title),
             value:item.done,
             onChanged: (value){
-
+              print("Teste:  $value");
             },
           );
         },
