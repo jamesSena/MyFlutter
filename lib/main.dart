@@ -33,12 +33,28 @@ var items = new List<Item>();
 }
 
 class _MyHomePageState extends State<MyHomePage> {
+var newTaskController = TextEditingController();
+
   @override
   Widget build(BuildContext context) {
+    
     return Scaffold(
       appBar: AppBar(
         leading: Text("Oi"),
-        title: Text("Todo List"),
+        title: TextFormField(
+          controller: newTaskController,
+          keyboardType: TextInputType.text,
+          style: TextStyle(
+            color: Colors.white,
+            fontSize: 24),
+            decoration: InputDecoration(
+              labelText: "Nova Tarefa",
+              labelStyle: TextStyle(
+                color: Colors.white
+              )
+            ),
+        ),
+        
         actions: <Widget>[
           Icon(Icons.plus_one)
         ],
@@ -53,6 +69,9 @@ class _MyHomePageState extends State<MyHomePage> {
             value:item.done,
             onChanged: (value){
               print("Teste:  $value");
+              setState(() {//Attualizando o item
+                 item.done = value;
+              });
             },
           );
         },
