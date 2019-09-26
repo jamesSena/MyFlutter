@@ -1,4 +1,6 @@
+import 'dart:convert';
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import 'models/Item.dart';
 
@@ -24,15 +26,19 @@ var items = new List<Item>();
 
   MyHomePage(){
     items = [];
-    items.add(Item(title:"Banana",done: false));
-    items.add(Item(title:"Abacate 2",done: true));
-    items.add(Item(title:"Limao 3",done: false));
+    // items.add(Item(title:"Banana",done: false));
+    // items.add(Item(title:"Abacate 2",done: true));
+    // items.add(Item(title:"Limao 3",done: false));
   }
   @override
   _MyHomePageState createState() => _MyHomePageState();
 }
 
 class _MyHomePageState extends State<MyHomePage> {
+  _MyHomePageState(){
+    load();
+  }
+
   var newTaskController = TextEditingController();
 
   void add(){
@@ -45,15 +51,31 @@ class _MyHomePageState extends State<MyHomePage> {
        )
      );
      newTaskController.text = ""; 
+     save();
     });
   }
-void remove(int index){
+  void remove(int index){
     setState(() {
      widget.items.removeAt(index); 
     });
+    save();
   }
+  Future load() async {
+    var prefs = await SharedPreferences.getInstance();
+    var data = prefs.getString('data');
+    if(data != null){
+      Iterable decoded = jsonDecode(data);
+      List<Item> result = decoded.map((x) => Item.fromJson(x)).toList();
+      setState(() {
+       widget.items = result; 
+      });
+    }
 
-
+  }
+  save() async{
+    var prefs = await SharedPreferences.getInstance();
+    await prefs.setString('data', jsonEncode(widget.items));
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -96,6 +118,8 @@ void remove(int index){
                 print("Teste:  $value");
                 setState(() {//Attualizando o item
                   item.done = value;
+                  save();
+
                 });
               },
             ),
@@ -105,6 +129,11 @@ void remove(int index){
           );
         },
       ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: add,
+        child: Icon(Icons.add),
+        backgroundColor: Colors.pink,
+      ),    
     );
   }
 }
